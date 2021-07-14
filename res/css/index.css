@@ -1,0 +1,23 @@
+#background
+{
+    height: 100%;
+    width: 100%;
+    padding-top: 50px;
+    padding-left: 50px;
+}
+
+#control
+{
+    background-color: lightgray;
+    border: rgb(68, 62, 62) 3px solid;
+    max-width: 500px;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+#board-container
+{
+    background-color: lightgray;
+    border: rgb(68, 62, 62) 3px solid;
+    padding: 10px;
+}
