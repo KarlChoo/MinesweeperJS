@@ -16,7 +16,15 @@ let logicBoard = [];
  9 = FLAGGED TILE (MINE)
 */
 
+let messageBox = document.querySelector("#message");
+let startButton = document.querySelector("#startBtn");
+
+
+startButton.addEventListener("click",initLogicBoard);
+
 function initLogicBoard(){
+
+    updateSystemMessaage("");
 
     for(let i = 0; i < boardXCount; i++){
         let row = [];
@@ -27,8 +35,7 @@ function initLogicBoard(){
     }
     placeMines();
     setTileClickEvent();
-
-    console.log(logicBoard);
+    gameStart();
 }
 
 function placeMines(){
@@ -54,60 +61,82 @@ function setTileClickEvent(){
         //if(tiles[i].id){};
         if(logicBoard[logicBoardXCoords][logicBoardYCoords] === 1){
             tiles[i].addEventListener("mousedown", event => {
+                
+
                 //If tile revealed
-                if(logicBoard[logicBoardXCoords][logicBoardYCoords] === 4) {
-                    return;
-                }
+                if(logicBoard[logicBoardXCoords][logicBoardYCoords] !== 4) {
+                    //If tile flagged
+                    if(logicBoard[logicBoardXCoords][logicBoardYCoords] === 9) {
+                        if (event.button == 2){
+                            logicBoard[logicBoardXCoords][logicBoardYCoords] = 1;
+                            tiles[i].innerHTML = hiddenTile;
+                        }
+                        return;
 
-                //If tile flagged
-                if(logicBoard[logicBoardXCoords][logicBoardYCoords] === 9) {
-                    if (event.button == 2){
-                        logicBoard[logicBoardXCoords][logicBoardYCoords] = 1;
-                        tiles[i].innerHTML = hiddenTile;
                     }
-                    return;
 
+                    //Reveal tile
+                    if(event.button == 0){
+                        logicBoard[logicBoardXCoords][logicBoardYCoords] = 4;
+                        tiles[i].innerHTML = mineTileClicked;
+                    }
+                    else if (event.button == 2){ //Flag tile
+                        logicBoard[logicBoardXCoords][logicBoardYCoords] = 9;
+                        tiles[i].innerHTML = flaggedTile;
+                    }
                 }
 
-                //Reveal tile
-                if(event.button == 0){
-                    logicBoard[logicBoardXCoords][logicBoardYCoords] = 4;
-                    tiles[i].innerHTML = mineTileClicked;
-                }
-                else if (event.button == 2){ //Flag tile
-                    logicBoard[logicBoardXCoords][logicBoardYCoords] = 9;
-                    tiles[i].innerHTML = flaggedTile;
-                }
+                
             })
         } else if (logicBoard[logicBoardXCoords][logicBoardYCoords] === 0) {
             tiles[i].addEventListener("mousedown", event => {
+                
                 //If tile revealed
-                if(logicBoard[logicBoardXCoords][logicBoardYCoords] === 3) {
-                    return;
-                }
-
-                //If tile flagged
-                if(logicBoard[logicBoardXCoords][logicBoardYCoords] === 8) {
-                    if (event.button == 2){
-                        logicBoard[logicBoardXCoords][logicBoardYCoords] = 0;
-                        tiles[i].innerHTML = hiddenTile;
+                if(logicBoard[logicBoardXCoords][logicBoardYCoords] !== 3) {
+                    //If tile flagged
+                    if(logicBoard[logicBoardXCoords][logicBoardYCoords] === 8) {
+                        if (event.button == 2){
+                            logicBoard[logicBoardXCoords][logicBoardYCoords] = 0;
+                            tiles[i].innerHTML = hiddenTile;
+                        }
+                        return;
                     }
-                    return;
+
+                    //Reveal tile
+                    if(event.button == 0){
+                        logicBoard[logicBoardXCoords][logicBoardYCoords] = 3;
+                        tiles[i].innerHTML = revealedTile;
+                    }
+                    else if (event.button == 2){
+                        logicBoard[logicBoardXCoords][logicBoardYCoords] = 8;
+                        tiles[i].innerHTML = flaggedTile;
+                    }
                 }
 
-                //Reveal tile
-                if(event.button == 0){
-                    logicBoard[logicBoardXCoords][logicBoardYCoords] = 3;
-                    tiles[i].innerHTML = revealedTile;
-                }
-                else if (event.button == 2){
-                    logicBoard[logicBoardXCoords][logicBoardYCoords] = 8;
-                    tiles[i].innerHTML = flaggedTile;
-                }
             })
         }
         
     }
+
 }
 
-initLogicBoard();
+function updateSystemMessaage(message){
+    messageBox.innerHTML = message;
+}
+
+function gameStart(){
+    minesweeperGame.isOngoing = true;
+    
+    while(minesweeperGame.isOngoing){
+        updateGameStatus();
+    }
+
+    updateSystemMessaage("Game end.");
+}
+
+function updateGameStatus(){
+    if(logicBoard.includes(4)){
+        minesweeperGame.isOngoing = false;
+    }
+}
+

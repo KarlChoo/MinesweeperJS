@@ -7,12 +7,21 @@
     padding-left: 50px;
 }
 
-#control
+#control, #message
 {
     background-color: lightgray;
     border: rgb(68, 62, 62) 3px solid;
     max-width: 500px;
     padding: 5px;
+}
+
+#message{
+    margin-bottom: 0px;
+    color: red;
+    min-height: 45px;
+}
+
+#control{
     margin-bottom: 20px;
 }
 

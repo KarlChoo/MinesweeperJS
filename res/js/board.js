@@ -1,4 +1,4 @@
-let tileSize = 36;
+let tileSize = 24;
 let boardXCount = 20;
 let boardYCount = 20;
 
@@ -14,8 +14,8 @@ function drawBoard(tileSize,boardXCount,boardYCount){
     let boardWidth = tileSize * boardXCount;
     let boardHeight = tileSize * boardYCount;    
 
-    document.querySelector("#board-container").style.width = `${boardWidth + 2.5 * boardXCount + 25}px`;
-    document.querySelector("#board-container").style.height = `${boardWidth + 2.5 * boardYCount}px`;
+    document.querySelector("#board-container").style.width = `${boardWidth + 2.5 * boardXCount}px`;
+    document.querySelector("#board-container").style.height = `${boardWidth + 2.5 * boardYCount + 25}px`;
 
     let table = document.createElement("table");
     table.setAttribute("id","board");
@@ -30,7 +30,8 @@ function drawBoard(tileSize,boardXCount,boardYCount){
             let cell = row.insertCell(j);
             cell.style.height = `${tileSize}px`;
             cell.style.width = `${tileSize}px`;
-            cell.style.padding = 1;
+            cell.style.margin = 0;
+            cell.style.padding = 0;
             cell.id = `t${i}_${j}`;
             cell.innerHTML = hiddenTile;
             /*
