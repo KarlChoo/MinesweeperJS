@@ -14,8 +14,8 @@ function drawBoard(tileSize,boardXCount,boardYCount){
     let boardWidth = tileSize * boardXCount;
     let boardHeight = tileSize * boardYCount;    
 
-    document.querySelector("#board-container").style.width = `${boardWidth + 2.5 * boardXCount}px`;
-    document.querySelector("#board-container").style.height = `${boardWidth + 2.5 * boardYCount + 25}px`;
+    document.querySelector("#board-container").style.width = `${510}px`;
+    document.querySelector("#board-container").style.height = `${545}px`;
 
     let table = document.createElement("table");
     table.setAttribute("id","board");

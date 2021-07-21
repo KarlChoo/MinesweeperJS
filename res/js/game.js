@@ -1,9 +1,9 @@
-let mineCount = 40;
+let mineCount = document.getElementById("mineInput").value;
 let board = document.querySelector("#board");
 
 let minesweeperGame = {
     "isOngoing" : false,
-    "moveLog" : []
+    "status": 0, // 0 = none, 1 = win, 2 = lose
 };
 
 let logicBoard = [];
@@ -78,6 +78,7 @@ function setTileClickEvent(){
                     //Reveal tile
                     if(event.button == 0){
                         logicBoard[logicBoardXCoords][logicBoardYCoords] = 4;
+                        checkTiles();
                         tiles[i].innerHTML = mineTileClicked;
                     }
                     else if (event.button == 2){ //Flag tile
@@ -105,6 +106,7 @@ function setTileClickEvent(){
                     //Reveal tile
                     if(event.button == 0){
                         logicBoard[logicBoardXCoords][logicBoardYCoords] = 3;
+                        checkTiles();
                         tiles[i].innerHTML = revealedTile;
                     }
                     else if (event.button == 2){
@@ -128,15 +130,29 @@ function gameStart(){
     minesweeperGame.isOngoing = true;
     
     while(minesweeperGame.isOngoing){
-        updateGameStatus();
+        if(logicBoard.includes(4)){
+            minesweeperGame.isOngoing = false;
+            minesweeperGame.status = 2;
+        }
+
+        if(!logicBoard.includes(0)){
+            minesweeperGame.isOngoing = false;
+            minesweeperGame.status = 1;
+        }
     }
 
-    updateSystemMessaage("Game end.");
+    switch(minesweeperGame.status){
+        case 1: updateSystemMessaage("Game end. You won.");
+                break;
+        case 2: updateSystemMessaage("Game end. You lose.");
+                break;
+    }
+
+    minesweeperGame.status = 0;
+    
 }
 
-function updateGameStatus(){
-    if(logicBoard.includes(4)){
-        minesweeperGame.isOngoing = false;
-    }
+function checkTiles(){
+    
 }
 
