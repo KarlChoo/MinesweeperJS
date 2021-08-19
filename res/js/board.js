@@ -1,6 +1,6 @@
 let tileSize = 24;
-let boardXCount = 20;
-let boardYCount = 20;
+let boardXCount = 10;
+let boardYCount = 10;
 
 let hiddenTile = `<img src='./res/img/hidden_tile.png' width=${tileSize}px height=${tileSize}px>`;
 let revealedTile = `<img src='./res/img/reveal_tile.png' width=${tileSize}px height=${tileSize}px>`;
@@ -54,11 +54,15 @@ const TILE_IMG = {
 
 function drawBoard(tileSize,boardXCount,boardYCount){
 
+    if(document.getElementById("board") !== null){
+        document.getElementById("board").remove();
+    }
+
     let boardWidth = tileSize * boardXCount;
     let boardHeight = tileSize * boardYCount;    
 
-    document.querySelector("#board-container").style.width = `${510}px`;
-    document.querySelector("#board-container").style.height = `${545}px`;
+    document.querySelector("#board-container").style.width = `${boardXCount * tileSize + 30}px`;
+    document.querySelector("#board-container").style.height = `${boardYCount * tileSize  + 60 + boardYCount}px`;
 
     let table = document.createElement("table");
     table.setAttribute("id","board");
@@ -76,7 +80,6 @@ function drawBoard(tileSize,boardXCount,boardYCount){
             cell.style.margin = 0;
             cell.style.padding = 0;
             cell.id = `t${i}_${j}`;
-            //cell.innerHTML = hiddenTile;
             setTileImage(cell, TILE_IMG.HIDDEN);
             /*
                 cell.addEventListener("click", event => {

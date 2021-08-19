@@ -1,4 +1,4 @@
-let board = document.querySelector("#board");
+let board;
 let boardVisual = document.querySelector("#board-container");
 
 let minesweeperGame = {
@@ -24,7 +24,7 @@ startButton.addEventListener("click",initLogicBoard);
 resetButton.addEventListener("click",resetGame);
 
 function initLogicBoard(){
-
+    board = document.querySelector("#board");
     if(minesweeperGame.status !== 0){
         return;
     }
@@ -78,11 +78,12 @@ function idtoXYCoords(id){
 }
 
 function getTileFromCoords(x,y){
-    
+    let tileId = `t${x}_${y}`;
+    return document.getElementById(tileId);
 }
 
 function setTileClickEvent(){
-     
+    
     let tiles = board.querySelectorAll("td");
     for(let i = 0;i < tiles.length; i++){
         let coords = idtoXYCoords(tiles[i].id);
@@ -102,32 +103,27 @@ function setTileClickEvent(){
                             logicBoard[logicBoardXCoords][logicBoardYCoords] = 1;
                             //tiles[i].innerHTML = hiddenTile;
                             setTileImage(tiles[i],TILE_IMG.HIDDEN);
-
                         }
                         return;
-
                     }
 
                     //Reveal tile
                     if(event.button == 0){
                         logicBoard[logicBoardXCoords][logicBoardYCoords] = 4;
-                        //tiles[i].innerHTML = mineTileClicked;
                         setTileImage(tiles[i],TILE_IMG.MINE_CLICKED);
-                        let pendingNumTilelist = checkSurroundingTiles(tiles[i]);
                     }
                     else if (event.button == 2){ //Flag tile
                         logicBoard[logicBoardXCoords][logicBoardYCoords] = 9;
                         //tiles[i].innerHTML = flaggedTile;
                         setTileImage(tiles[i],TILE_IMG.FLAG);
                     }
-                    updateGameStatus();
+                    checkGameStatus();
                 }
 
                 
             })
         } else if (logicBoard[logicBoardXCoords][logicBoardYCoords] === 0) {
             tiles[i].addEventListener("mousedown", event => {
-                
                 //If tile revealed
                 if(logicBoard[logicBoardXCoords][logicBoardYCoords] !== 3 && minesweeperGame.status === 0) {
                     //If tile flagged
@@ -146,13 +142,16 @@ function setTileClickEvent(){
                         //tiles[i].innerHTML = revealedTile;
                         setTileImage(tiles[i],TILE_IMG.REVEALED);
                         let pendingNumTilelist = checkSurroundingTiles(tiles[i]);
+                        pendingNumTilelist.forEach(numTile => {
+                            setTileImage(numTile.tile,numTile.tileImgCode);
+                        });
                     }
                     else if (event.button == 2){
                         logicBoard[logicBoardXCoords][logicBoardYCoords] = 8;
                         //tiles[i].innerHTML = flaggedTile;
                         setTileImage(tiles[i],TILE_IMG.FLAG);
                     }
-                    updateGameStatus();
+                    checkGameStatus();
                 }
 
             })
@@ -162,7 +161,7 @@ function setTileClickEvent(){
 
 }
 
-function updateGameStatus(){
+function checkGameStatus(){
     if(checkAllTiles(4)){
         minesweeperGame.status = 2;
     }
@@ -184,6 +183,7 @@ function resetGame(){
     minesweeperGame.status = 0;
     minesweeperGame.ongoing = false;
     logicBoard = [];
+    drawBoard(tileSize,boardXCount,boardYCount);
     initLogicBoard();
 }
 
@@ -199,66 +199,160 @@ function checkAllTiles(tileStatus){
 function checkSurroundingTiles(tile){
     let tileChecklist = [];
     let numTileList = [];
+    let counter = 0;
     tileChecklist.push(tile);
 
-    while(tileChecklist.length > 0){
-        let coords = idtoXYCoords(tileChecklist[0].id);
+    while(tileChecklist.length > counter){
+        let coords = idtoXYCoords(tileChecklist[counter].id);
         let x = coords.x
         let y = coords.y; 
+
+        if(logicBoard[x][y] === 1){
+            tileChecklist.splice(counter,1);
+            continue;
+        }
 
         let noMinesSurrounding = 0;
         
         //Check W
-        if(y - 1 > 0){
-            //logicBoard[x][y - 1] = "N";
-            noMinesSurrounding++;
+        if(y - 1 >= 0){
+            //logicBoard[x][y - 1] = "W";
+            let tile = getTileFromCoords(x, y - 1);
+            if(logicBoard[x][y - 1] === 1 || logicBoard[x][y - 1] === 9){
+                noMinesSurrounding++;
+            }
         }
         //Check E
         if(y + 1 < boardYCount){
-            //logicBoard[x][y + 1] = "S";
-            noMinesSurrounding++;
+            //logicBoard[x][y + 1] = "E";
+            let tile = getTileFromCoords(x, y + 1);
+            if(logicBoard[x + 1][y] === 1 || logicBoard[x + 1][y] === 9){
+                noMinesSurrounding++;
+            }
         }
         //Check S
         if(x + 1 < boardXCount){
-            //logicBoard[x + 1][y] = "E";
-            noMinesSurrounding++;
+            //logicBoard[x + 1][y] = "S";
+            let tile = getTileFromCoords(x + 1, y);
+            if(logicBoard[x + 1][y] === 1 || logicBoard[x + 1][y] === 1){
+                noMinesSurrounding++;
+            }
         }
         //Check N
-        if(x - 1 > 0){
-            //logicBoard[x - 1][y] = "W";
-            noMinesSurrounding++;
+        if(x - 1 >= 0){
+            //logicBoard[x - 1][y] = "N";
+            let tile = getTileFromCoords(x - 1, y);
+            if(logicBoard[x - 1][y] === 1 || logicBoard[x - 1][y] === 9){
+                noMinesSurrounding++;
+            }
         }
         //Check SW
-        if(y - 1 > 0 && x + 1 < boardXCount){
-            //logicBoard[x + 1][y - 1] = "NE";
-            noMinesSurrounding++;
+        if(y - 1 >= 0 && x + 1 < boardXCount){
+            //logicBoard[x + 1][y - 1] = "SW";
+            let tile = getTileFromCoords(x + 1, y - 1);
+            if(logicBoard[x + 1][y - 1] === 1 || logicBoard[x + 1][y - 1] === 9){
+                noMinesSurrounding++;
+            }
         }
         //Check NW
-        if(y - 1 > 0 && x - 1 > 0){
+        if(y - 1 >= 0 && x - 1 >= 0){
             //logicBoard[x - 1][y - 1] = "NW";
-            noMinesSurrounding++;
+            let tile = getTileFromCoords(x - 1, y - 1);
+            if(logicBoard[x - 1][y - 1] === 1 || logicBoard[x - 1][y - 1] === 9){
+                noMinesSurrounding++;
+            }
         }
         //Check SE
         if(y + 1 < boardYCount && x + 1 < boardXCount){
             //logicBoard[x + 1][y + 1] = "SE";
-            noMinesSurrounding++;
+            let tile = getTileFromCoords(x + 1, y + 1);
+            if(logicBoard[x + 1][y + 1] === 1 || logicBoard[x + 1][y + 1] === 9){
+                noMinesSurrounding++;
+            }
         }
         //Check NE
-        if(y + 1 < boardYCount && x - 1 > 0){
-            //logicBoard[x - 1][y + 1] = "SW";
-            noMinesSurrounding++;
+        if(y + 1 < boardYCount && x - 1 >= 0){
+            //logicBoard[x - 1][y + 1] = "NE";
+            let tile = getTileFromCoords(x - 1, y + 1)
+            if(logicBoard[x - 1][y + 1] === 1 || logicBoard[x - 1][y + 1] === 9){
+                noMinesSurrounding++;
+            }
         }
 
         if(noMinesSurrounding === 0){
-            numTileList.push({tile: tileChecklist[0],noMinesSurrounding: 12});
-            tileChecklist.push();
+            numTileList.push({tile: tileChecklist[counter],tileImgCode: 12});
+
+            //Check W
+            if(y - 1 >= 0){
+                let tile = getTileFromCoords(x, y - 1);
+                if(!tileChecklist.includes(tile)){
+                    tileChecklist.push(tile);
+                }
+            }
+
+            //Check E
+            if(y + 1 < boardYCount){
+                let tile = getTileFromCoords(x, y + 1);
+                if(!tileChecklist.includes(tile)){
+                    tileChecklist.push(tile);
+                }
+            }
+
+            //Check S
+            if(x + 1 < boardXCount){
+                let tile = getTileFromCoords(x + 1, y);
+                if(!tileChecklist.includes(tile)){
+                    tileChecklist.push(tile);
+                }
+            }
+
+            //Check N
+            if(x - 1 >= 0){
+                let tile = getTileFromCoords(x - 1, y);
+                if(!tileChecklist.includes(tile)){
+                    tileChecklist.push(tile);
+                }
+            }
+
+            //Check SW
+            if(y - 1 >= 0 && x + 1 < boardXCount){
+                let tile = getTileFromCoords(x + 1, y - 1);
+                if(!tileChecklist.includes(tile)){
+                    tileChecklist.push(tile);
+                }
+            }
+
+            //Check NW
+            if(y - 1 >= 0 && x - 1 >= 0){
+                let tile = getTileFromCoords(x - 1, y - 1);
+                if(!tileChecklist.includes(tile)){
+                    tileChecklist.push(tile);
+                }
+            }
+
+            //Check SE
+            if(y + 1 < boardYCount && x + 1 < boardXCount){
+                let tile = getTileFromCoords(x + 1, y + 1);
+                if(!tileChecklist.includes(tile)){
+                    tileChecklist.push(tile);
+                }
+            }
+
+            //Check NE
+            if(y + 1 < boardYCount && x - 1 >= 0){
+                let tile = getTileFromCoords(x - 1, y + 1)
+                if(!tileChecklist.includes(tile)){
+                    tileChecklist.push(tile);
+                }
+            }
+
         }else{
-            numTileList.push({tile: tileChecklist[0],noMinesSurrounding: noMinesSurrounding});
+            numTileList.push({tile: tileChecklist[counter],tileImgCode: noMinesSurrounding});
         }
-
-        tileChecklist.pop();
+        counter++;
     }
-
+    console.log(numTileList);
+    
     return numTileList;
 }
 
