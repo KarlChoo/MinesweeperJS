@@ -5,7 +5,8 @@ let mineCount;
 
 let minesweeperGame = {
     "status": 0, // 0 = none, 1 = win, 2 = lose
-    ongoing: false
+    ongoing: false,
+    difficulty: DIFFICULTY.EASY
 };
 
 let messageBox = document.querySelector("#message");
@@ -22,12 +23,14 @@ function initLogicBoard(){
         return;
     }
 
-    mineCount = document.getElementById("mineInput").value;
+    mineCount = minesweeperGame.difficulty.mines;
 
-    if(mineCount > 0.7 * boardXCount * boardXCount){
-        updateSystemMessaage("Can't have too many mines");
-        return;
-    }
+    // mineCount = document.getElementById("mineInput").value;
+
+    // if(mineCount > 0.7 * boardXCount * boardXCount){
+    //     updateSystemMessaage("Can't have too many mines");
+    //     return;
+    // }
 
     for(let i = 0; i < boardXCount; i++){
         let row = [];

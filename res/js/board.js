@@ -50,6 +50,12 @@ const TILE_IMG = {
     FLAG: 15
 }
 
+const DIFFICULTY = {
+    EASY: {height: 10, width: 10, mines: 10},
+    INTERMEDIATE: {height: 16, width: 16, mines: 40},
+    EXPERT: {height: 16, width: 30, mines: 99},
+    CUSTOM : {height: 30, width: 30, mines: 150},
+}
 
 
 function drawBoard(tileSize,boardXCount,boardYCount){
